@@ -117,19 +117,10 @@ void SDL_RenderFillEllipse(SDL_Renderer *renderer, int x, int y, int x_radius, i
 void init_playground() {
 
     // dft(y);
-
-    
+   
 }
 
-void update_playground() {
-
-}
-
-int map(int val, int min_from, int max_from, int min_target, int max_target) {
-    return((int) ((((float)val - min_from) / (max_from - min_from)) * (float) (max_target - min_target) + min_target));
-}
-
-void push_curv_point(SDL_Point * arr, double y, int x_offset, unsigned int length) {
+void unshift_curv_point(SDL_Point * arr, double y, int x_offset, unsigned int length) {
 
     SDL_Point new_point;
 
@@ -142,6 +133,66 @@ void push_curv_point(SDL_Point * arr, double y, int x_offset, unsigned int lengt
         }
 
     arr[0] = new_point;
+}
+
+// Called at evry frame
+void update_playground(SDL_Renderer *renderer) {
+        
+        // Clear background
+        SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+        SDL_RenderClear(renderer);
+
+        // Set draw color
+        SDL_SetRenderDrawColor(renderer, 200, 200, 200, 100);
+
+        #define PI 3.14159265
+        #define X_OFFSET 350
+        #define Y_OFFSET 300
+
+        double x = 0.0;
+        double y = 0.0;
+
+        int x_circle_offset = 0;
+        int y_circle_offset = 0;
+
+        for(double i = 0.0; i < 5.0; i++) {
+
+            double n = i * 2.0 + 1.0;
+
+            double radius = 150.0 * (4.0 / (n * PI));
+
+            x = (double) radius * cos(n * timing);
+            y = (double) radius * sin(n * timing);
+
+            SDL_SetRenderDrawColor(renderer, 200, 50, 200, 100);
+            SDL_RenderDrawCircle(renderer, x_circle_offset + X_OFFSET, y_circle_offset + Y_OFFSET, radius);
+
+            SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+            SDL_RenderDrawLine(renderer, x_circle_offset + X_OFFSET + 0, y_circle_offset + Y_OFFSET + 0, x_circle_offset + X_OFFSET + (int) x, y_circle_offset + Y_OFFSET + (int) y);
+
+            x_circle_offset += (int) x;
+            y_circle_offset += (int) y;
+        }
+
+        x_circle_offset -= (int) x;
+        y_circle_offset -= (int) y;
+
+        unshift_curv_point(graph, y + (double) Y_OFFSET + (double) y_circle_offset, X_OFFSET+400, graph_length++);
+
+        if(graph_length > MAX_GRAPH_LENGTH-1)
+            graph_length--;
+
+        SDL_Color point_color = {255, 0, 0, 100};
+        SDL_RenderFillCircle(renderer, x_circle_offset + X_OFFSET + (int) x, y_circle_offset + Y_OFFSET + (int) y, 4, point_color);
+
+        SDL_SetRenderDrawColor(renderer, 50, 50, 200, 100);
+        SDL_RenderDrawLine(renderer, graph[0].x, graph[0].y, x_circle_offset + X_OFFSET + (int) x, y_circle_offset + Y_OFFSET + (int) y);
+
+        SDL_SetRenderDrawColor(renderer, 50, 200, 50, 100);
+        SDL_RenderDrawLines(renderer, graph, graph_length);
+
+        timing -= 0.012;
+
 }
 
 int main(int argc, char **argv) {
@@ -257,86 +308,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        // Clear background
-        SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-        SDL_RenderClear(renderer);
-
-        // Set draw color
-        SDL_SetRenderDrawColor(renderer, 200, 200, 200, 100);
-
-        #define PI 3.14159265
-        #define x_offset 350
-        #define y_offset 300
-
-        double x = 0.0;
-        double y = 0.0;
-
-        int x_circle_offset = 0;
-        int y_circle_offset = 0;
-
-        for(double i = 0.0; i < 5.0; i++) {
-
-            double n = i * 2.0 + 1.0;
-
-            double radius = 150.0 * (4.0 / (n * PI));
-
-            x = (double) radius * cos(n * timing);
-            y = (double) radius * sin(n * timing);
-
-            SDL_SetRenderDrawColor(renderer, 200, 50, 200, 100);
-            SDL_RenderDrawCircle(renderer, x_circle_offset + x_offset, y_circle_offset + y_offset, radius);
-
-            // SDL_Color point_color;
-            // point_color.r = 255;
-            // point_color.g = 255;
-            // point_color.b = 255;
-            // point_color.a = 100;
-            // SDL_RenderFillCircle(renderer, x_circle_offset + x_offset + (int) x, y_circle_offset + y_offset + (int) y, 3, point_color);
-
-            SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-            SDL_RenderDrawLine(renderer, x_circle_offset + x_offset + 0, y_circle_offset + y_offset + 0, x_circle_offset + x_offset + (int) x, y_circle_offset + y_offset + (int) y);
-
-            x_circle_offset += (int) x;
-            y_circle_offset += (int) y;
-        }
-
-        x_circle_offset -= (int) x;
-        y_circle_offset -= (int) y;
-
-        push_curv_point(graph, y + (double) y_offset + (double) y_circle_offset, x_offset+400, graph_length++);
-
-        if(graph_length > MAX_GRAPH_LENGTH-1)
-            graph_length--;
-
-        SDL_Color point_color;
-        point_color.r = 255;
-        point_color.g = 0;
-        point_color.b = 0;
-        point_color.a = 100;
-        SDL_RenderFillCircle(renderer, x_circle_offset + x_offset + (int) x, y_circle_offset + y_offset + (int) y, 4, point_color);
-
-        SDL_SetRenderDrawColor(renderer, 50, 50, 200, 100);
-        SDL_RenderDrawLine(renderer, graph[0].x, graph[0].y, x_circle_offset + x_offset + (int) x, y_circle_offset + y_offset + (int) y);
-
-        SDL_SetRenderDrawColor(renderer, 50, 200, 50, 100);
-        SDL_RenderDrawLines(renderer, graph, graph_length);
-
-        // float x, y = 0.0;
-
-        // for(int i=0; i < 5; i++) {
-        //     float prevx = x;
-        //     float prevy = y;
-
-        //     float n = (float) (i * 2 + 1);
-        //     float radius = 75.0 * (4.0 / (n * PI));
-        //     x += radius * cos(n * timing);
-        //     y += radius * sin(n * timing);
-
-        //     SDL_RenderDrawEllipse(renderer, x_offset+(int)prevx, y_offset+(int)prevy, (int) radius, (int) radius);
-
-        // }
-
-        timing -= 0.012;
+        update_playground(renderer);
 
         if(flagShowFPS) {
 
@@ -357,8 +329,6 @@ int main(int argc, char **argv) {
 
         dw1 = dw2;
         last_tick = dw2 = SDL_GetTicks();
-
-        update_playground();
     }
 
     /*------------------------------------------*/

@@ -28,8 +28,6 @@ double timing = 0.0;
 SDL_Point graph[MAX_GRAPH_LENGTH];
 unsigned int graph_length = 0;
 
-// int y[18] = {100, 100, 100, -100, -100, -100, 100, 100, 100, -100, -100, -100, 100, 100, 100, -100, -100, -100 };
-
 void showMsg(SDL_Renderer *renderer, char *txt, int x, int y, int size);
 
 void SDL_RenderDrawEllipse(SDL_Renderer *renderer, int x, int y, int x_radius, int y_radius) {
@@ -120,11 +118,11 @@ void init_playground() {
    
 }
 
-void unshift_curv_point(SDL_Point * arr, double y, int x_offset, unsigned int length) {
+void unshift_curv_point(SDL_Point * arr, double y, int x, unsigned int length) {
 
     SDL_Point new_point;
 
-    new_point.x = x_offset;
+    new_point.x = x;
     new_point.y = (int) round(y);
 
     for(unsigned int i = length; i > 0; i--) {

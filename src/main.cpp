@@ -1,10 +1,6 @@
-// Casse briques - SDL2
 //
-// COMPILATION
-// gcc src/main.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer -mwindows
-
-// EXECUTION
-// bin\prog.exe
+// Fourier Transform Epicycles - SDL2
+//
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -114,8 +110,6 @@ void SDL_RenderFillEllipse(SDL_Renderer *renderer, int x, int y, int x_radius, i
 
 void init_playground() {
 
-    // dft(y);
-   
 }
 
 void unshift_curv_point(SDL_Point * arr, double y, int x, unsigned int length) {
@@ -219,7 +213,7 @@ int main(int argc, char **argv) {
                                 0);
     if(window == NULL) {
         SDL_Log("ERREUR : Echec creation fenetre > %s\n", SDL_GetError());
-        // TTF_Quit();
+        TTF_Quit();
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
@@ -246,7 +240,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    // Iinitialize the grid
+    // Initialisation
     init_playground();
 
     unsigned int current_tick, last_tick, next_tick = 0;
